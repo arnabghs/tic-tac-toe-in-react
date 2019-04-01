@@ -2,20 +2,21 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 
-function Square(props){
-	return (
-		<button className="square" onClick={props.onClick}>
-			{props.value}
-		</button>
-	);
+function Square(props) {
+  return (
+    <button className="square" onClick={props.onClick}>
+      {props.value}
+    </button>
+  );
 }
 
 class Board extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-			squares: new Array(9).fill(null),
-			isXNext : true
+      squares: new Array(9).fill(null),
+			isXNext: true,
+			lastPlayedIndex: null
     };
   }
 
@@ -29,13 +30,24 @@ class Board extends React.Component {
   }
 
   handleClick(i) {
+		let result = getWinner(this.state.squares, this.state.lastPlayedIndex);
+    if (result.won) return;
+
     const updatedSquares = this.state.squares.slice();
     updatedSquares[i] = this.state.isXNext ? "X" : "O";
-    this.setState({ squares: updatedSquares, isXNext : (!this.state.isXNext) });
+    this.setState({
+      squares: updatedSquares,
+			isXNext: !this.state.isXNext,
+			lastPlayedIndex: i
+    });
   }
 
   render() {
-    const status = "Next player: " + (this.state.isXNext ? "X" : "O");
+		let status = `Turn of ${this.state.isXNext ? "X" : "O"}`;
+    let result = getWinner(this.state.squares, this.state.lastPlayedIndex);
+    if (result.won) {
+      status = `${result.winner} has won!`;
+    }
 
     return (
       <div>
@@ -75,6 +87,35 @@ class Game extends React.Component {
     );
   }
 }
+
+const hasWon = function(squares) {
+  const winningCombinations = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6]
+  ];
+
+  const hasWon = winningCombinations.some(
+    comb =>
+      squares[comb[0]] &&
+      squares[comb[0]] === squares[comb[1]] &&
+      squares[comb[1]] === squares[comb[2]]
+  );
+
+  return hasWon;
+};
+
+const getWinner = function(squares, lastPlayedIndex) {
+  if (hasWon(squares)) {
+    return { won: true, winner: squares[lastPlayedIndex] };
+  }
+  return { won: false, winner: null };
+};
 
 // ========================================
 
