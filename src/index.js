@@ -31,7 +31,7 @@ class Board extends React.Component {
 
   handleClick(i) {
 		let result = getWinner(this.state.squares, this.state.lastPlayedIndex);
-    if (result.won) return;
+    if (result.won || this.state.squares[i] || !this.state.squares.includes(null)) return;
 
     const updatedSquares = this.state.squares.slice();
     updatedSquares[i] = this.state.isXNext ? "X" : "O";
@@ -47,7 +47,11 @@ class Board extends React.Component {
     let result = getWinner(this.state.squares, this.state.lastPlayedIndex);
     if (result.won) {
       status = `${result.winner} has won!`;
-    }
+		}
+		
+		if (!this.state.squares.includes(null)) {
+			status = `Game is drawn.`
+		}
 
     return (
       <div>
