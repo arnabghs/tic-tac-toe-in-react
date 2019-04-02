@@ -29,7 +29,7 @@ body {
   display: flex;
 }
 
-.square, .winning-square {
+.square {
   border: 1px solid #999;
   font-size: 25px;
   height: 80px;
@@ -39,7 +39,6 @@ body {
 }
 
 .winning-square {
-  background-color: #c2e968;
+	@extend .square;
+	background-color: rgb(194, 233, 104);
 }
-
-/*# sourceMappingURL=index.css.map */
