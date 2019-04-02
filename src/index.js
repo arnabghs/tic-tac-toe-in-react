@@ -57,7 +57,11 @@ class Board extends React.Component {
       for (let row = 0; row < 3; row++) {
         cells.push(this.renderSquare(counter++));
       }
-      rows.push(<div key = {column} className="board-row">{cells}</div>);
+      rows.push(
+        <div key={column} className="board-row">
+          {cells}
+        </div>
+      );
     }
     return rows;
   }
@@ -65,12 +69,13 @@ class Board extends React.Component {
   render() {
     let status = `Turn of ${this.state.isXNext ? "X" : "O"}`;
     let result = getWinner(this.state.squares, this.state.lastPlayedIndex);
-    if (result.won) {
-      status = `${result.winner} has won!`;
-    }
 
     if (!this.state.squares.includes(null)) {
       status = `Game is drawn.`;
+		}
+		
+    if (result.won) {
+      status = `${result.winner} has won!`;
     }
 
     return (
@@ -98,6 +103,14 @@ class Game extends React.Component {
   }
 }
 
+const checkWinningCondition = function(squares, combination) {
+  return (
+    squares[combination[0]] &&
+    squares[combination[0]] === squares[combination[1]] &&
+    squares[combination[1]] === squares[combination[2]]
+  );
+};
+
 const hasWon = function(squares) {
   const winningCombinations = [
     [0, 1, 2],
@@ -111,12 +124,8 @@ const hasWon = function(squares) {
   ];
 
   const hasWon = winningCombinations.some(
-    comb =>
-      squares[comb[0]] &&
-      squares[comb[0]] === squares[comb[1]] &&
-      squares[comb[1]] === squares[comb[2]]
+    checkWinningCondition.bind(null, squares)
   );
-
   return hasWon;
 };
 
