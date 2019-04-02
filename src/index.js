@@ -15,62 +15,68 @@ class Board extends React.Component {
     super(props);
     this.state = {
       squares: new Array(9).fill(null),
-			isXNext: true,
-			lastPlayedIndex: null
+      isXNext: true,
+      lastPlayedIndex: null
     };
+  }
+
+  handleClick(i) {
+    let result = getWinner(this.state.squares, this.state.lastPlayedIndex);
+    if (
+      result.won ||
+      this.state.squares[i] ||
+      !this.state.squares.includes(null)
+    )
+      return;
+
+    const updatedSquares = this.state.squares.slice();
+    updatedSquares[i] = this.state.isXNext ? "X" : "O";
+    this.setState({
+      squares: updatedSquares,
+      isXNext: !this.state.isXNext,
+      lastPlayedIndex: i
+    });
   }
 
   renderSquare(i) {
     return (
       <Square
+        key={i}
         value={this.state.squares[i]}
         onClick={() => this.handleClick(i)}
       />
     );
   }
 
-  handleClick(i) {
-		let result = getWinner(this.state.squares, this.state.lastPlayedIndex);
-    if (result.won || this.state.squares[i] || !this.state.squares.includes(null)) return;
+  createBoard() {
+    let counter = 0;
+    let rows = [];
 
-    const updatedSquares = this.state.squares.slice();
-    updatedSquares[i] = this.state.isXNext ? "X" : "O";
-    this.setState({
-      squares: updatedSquares,
-			isXNext: !this.state.isXNext,
-			lastPlayedIndex: i
-    });
+    for (let column = 0; column < 3; column++) {
+      let cells = [];
+      for (let row = 0; row < 3; row++) {
+        cells.push(this.renderSquare(counter++));
+      }
+      rows.push(<div key = {column} className="board-row">{cells}</div>);
+    }
+    return rows;
   }
 
   render() {
-		let status = `Turn of ${this.state.isXNext ? "X" : "O"}`;
+    let status = `Turn of ${this.state.isXNext ? "X" : "O"}`;
     let result = getWinner(this.state.squares, this.state.lastPlayedIndex);
     if (result.won) {
       status = `${result.winner} has won!`;
-		}
-		
-		if (!this.state.squares.includes(null)) {
-			status = `Game is drawn.`
-		}
+    }
+
+    if (!this.state.squares.includes(null)) {
+      status = `Game is drawn.`;
+    }
 
     return (
       <div>
         <div className="status">{status}</div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
+        {this.createBoard()}
       </div>
     );
   }
