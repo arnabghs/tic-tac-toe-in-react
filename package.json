@@ -23,7 +23,7 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.23",
     "react-redux": "^7.1.0",
     "redux": "^4.0.2",
     "uuid": "^3.3.2"
